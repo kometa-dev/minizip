@@ -7,11 +7,11 @@
 
   find_package(ZLIB)
 
-  if(ZLIB_FOUND)
+  if(ZLIB_FOUND AND NOT "${ZLIB_INCLUDE_DIR}" STREQUAL "${CMAKE_INSTALL_PREFIX}/include")
     set(${MY_PROJECT_NAME}_ZLIB_INCLUDE_DIR "${ZLIB_INCLUDE_DIR}")
     set(${MY_PROJECT_NAME}_ZLIB_LIBRARY_RELEASE "${ZLIB_LIBRARY_RELEASE}")
     set(${MY_PROJECT_NAME}_ZLIB_LIBRARY_DEBUG "${ZLIB_LIBRARY_DEBUG}")
-  else(ZLIB_FOUND)
+  else()
     set(additional_cmake_args )
     if(CTEST_USE_LAUNCHERS)
       list(APPEND additional_cmake_args
@@ -72,5 +72,5 @@
 
     set(${MY_PROJECT_NAME}_LIBRARY ${library})
 
-  endif(ZLIB_FOUND)
+  endif()
 

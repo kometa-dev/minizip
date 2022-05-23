@@ -49,14 +49,6 @@ if(WIN32)
   add_definitions(-D_WIN32_WINNT=${ver})
 endif()
 
-##  Explicit setting of Unix version
-
-if(CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif()
-
-##
-
 set(ep_common_C_FLAGS "${CMAKE_C_FLAGS}")
 set(ep_common_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
