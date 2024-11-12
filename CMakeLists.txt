@@ -71,25 +71,31 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 # create minizip library
 add_library(minizip SHARED ${MINIZIP_SRC} ${MINIZIP_PUBLIC_HEADERS})
 
+find_package(Qt5 OPTIONAL_COMPONENTS Core Zlib)
+if (Qt5Zlib_FOUND)
+  target_link_libraries(minizip Qt5::Zlib Qt5::Core)
+  message("minizip found Qt5::Zlib Qt5::Core")
+elseif(${MY_PROJECT_NAME}_USE_SUPERBUILD)
 #-----------------------------------------------------------------------------
 # Superbuild script
 #-----------------------------------------------------------------------------
-
-if(${MY_PROJECT_NAME}_USE_SUPERBUILD)
   set(${MY_PROJECT_NAME}_ZLIB_INCLUDE_DIR )
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
 
   include_directories("${${MY_PROJECT_NAME}_ZLIB_INCLUDE_DIR}")
-  add_dependencies(minizip ZLIB)
   if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     target_link_libraries(minizip debug "${${MY_PROJECT_NAME}_ZLIB_LIBRARY_DEBUG}")
+    message("minizip uses zlib ${${MY_PROJECT_NAME}_ZLIB_LIBRARY_DEBUG}")
   else()
     target_link_libraries(minizip optimized "${${MY_PROJECT_NAME}_ZLIB_LIBRARY_RELEASE}")
+    message("minizip uses zlib ${${MY_PROJECT_NAME}_ZLIB_LIBRARY_RELEASE}")
   endif()
 else()
   find_package(ZLIB REQUIRED)
   target_link_libraries(minizip ZLIB::ZLIB)
+  message("minizip found ZLIB::ZLIB")
 endif()
+message("minizip search zlib rezult ${Qt5Zlib_FOUND}|${ZLIB_FOUND} ${ZLIB_VERSION_MAJOR}.${ZLIB_VERSION_MINOR} includes=${ZLIB_INCLUDE_DIRS} libs=${ZLIB_LIBRARIES}")
 
 #-----------------------------------------------------------------------------
 # ${MY_PROJECT_NAME}_SUPERBUILD_BINARY_DIR
@@ -104,7 +110,7 @@ endif()
 
 option(USE_AES "enables building of aes library" OFF)
 if(USE_AES)
-  set(AES_SRC 
+  set(AES_SRC
     aes/aescrypt.c
     aes/aeskey.c
     aes/aestab.c
@@ -115,7 +121,7 @@ if(USE_AES)
     aes/pwd2key.c
     aes/sha1.c)
 
-  set(AES_PUBLIC_HEADERS 
+  set(AES_PUBLIC_HEADERS
     aes/aes.h
     aes/aes_ni.h
     aes/aesopt.h
