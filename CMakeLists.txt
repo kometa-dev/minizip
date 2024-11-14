@@ -68,12 +68,15 @@ endif()
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+set(_dependency ZLIB)
+
 # create minizip library
 add_library(minizip SHARED ${MINIZIP_SRC} ${MINIZIP_PUBLIC_HEADERS})
 
 find_package(Qt5 OPTIONAL_COMPONENTS Core Zlib)
 if (Qt5Zlib_FOUND)
   target_link_libraries(minizip Qt5::Zlib Qt5::Core)
+  set(_dependency Qt5 COMPONENTS Core Zlib)
   message("minizip found Qt5::Zlib Qt5::Core")
 elseif(${MY_PROJECT_NAME}_USE_SUPERBUILD)
 #-----------------------------------------------------------------------------
@@ -175,7 +178,7 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/minizip-config.cmake.in"
 "
 @PACKAGE_INIT@
 include(CMakeFindDependencyMacro)
-find_dependency(ZLIB)
+find_dependency(${_dependency})
 include(\"\${CMAKE_CURRENT_LIST_DIR}/minizip-exports.cmake\")
 check_required_components(minizip)
 ")
